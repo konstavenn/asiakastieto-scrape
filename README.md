@@ -71,4 +71,4 @@ Contributions, issues, and feature requests are welcome. Feel free to check [iss
 If you have any questions or encounter issues, please contact:
 Your Name - konsta.venn@gmail.com
 
-Project Link: [https://github.com/yourusername/asiakastieto-scraper](https://github.com/konstavenn/asiakastieto-scrape)
+Project Link: [https://github.com/konstavenn/asiakastieto-scrape](https://github.com/konstavenn/asiakastieto-scrape)
