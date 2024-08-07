@@ -1,0 +1,4 @@
+selenium==4.1.0
+webdriver-manager==3.5.2
+beepy==1.0.7
+PySimpleGUI==4.60.1

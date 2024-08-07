@@ -32,8 +32,8 @@ def mybeep():
 
 
 layout = [
-    [sg.Text('Haettava henkilö:'), sg.InputText("", key='Input1')],
-    [sg.Button("Hae", button_color='green')],
+    [sg.Text('Person of interest:'), sg.InputText("", key='Input1')],
+    [sg.Button("Search", button_color='green')],
     #[sg.Output(key='-OUT-', size=(80, 20), )],
     [sg.Multiline(autoscroll=True, size=(80, 60), reroute_stdout=True, write_only=True, disabled=True, key='-OUT-')],
 ]
@@ -211,9 +211,9 @@ def person_search(driver, person, dd_file):
 
 
 
-def count_säätiöt(driver, full_säätiö_count):
+def count_foundation(driver, full_foundation_count):
     boards_actually = 0
-    for company in range(full_säätiö_count):
+    for company in range(full_foundation_count):
         company+=1
         #get first company name
         driver, firma_nimi = get_element(driver, '/html/body/div[3]/main/section/div[3]/div/div/div[2]/div/div/div[2]/a[{}]/span[3]'.format(company))
@@ -223,27 +223,27 @@ def count_säätiöt(driver, full_säätiö_count):
     return driver, boards_actually
 
 
-def säätiö_search(driver, person, dd_file):
+def foundation_search(driver, person, dd_file):
     search_for_person(driver, person)
 
     #get count of boards
-    driver, full_säätiö_count = get_element(driver, '/html/body/div[3]/main/section/div[3]/div/div/div[1]/div/div/div[1]/span')
-    full_säätiö_count = int(full_säätiö_count.text.split()[0])
+    driver, full_foundation_count = get_element(driver, '/html/body/div[3]/main/section/div[3]/div/div/div[1]/div/div/div[1]/span')
+    full_foundation_count = int(full_foundation_count.text.split()[0])
 
     #make sure all are on same page
-    if full_säätiö_count > 100:
-        full_säätiö_count = 100
+    if full_foundation_count > 100:
+        full_foundation_count = 100
     #get correct count without duplicates
-    driver, boards_actually = count_säätiöt(driver, full_säätiö_count)
+    driver, boards_actually = count_foundation(driver, full_foundation_count)
     list_of_fucked_up_companies = []
     if boards_actually > 0:
-        log(dd_file, "{} on mukana {} säätiössä.".format(person, boards_actually))
+        log(dd_file, "{} on mukana {} foundationssä.".format(person, boards_actually))
 
         running_company_count=0
         #To not log duplicates
         company_names = []
     
-        for company in range(full_säätiö_count):
+        for company in range(full_foundation_count):
             company+=1
             running_company_count+=1
 
@@ -299,7 +299,7 @@ def säätiö_search(driver, person, dd_file):
 
 
 def do_search(people):
-    driver = init_driver()
+    driver = init_driver(False)
     driver = open_page(driver, "https://www.asiakastieto.fi/web/fi/")
 
     #loop through people
@@ -309,11 +309,11 @@ def do_search(people):
         #look for ompanies
         driver, list_of_fucked_up_companies = person_search(driver, person, dd_file)
 
-        #look for säätiöt
+        #look for foundations
         person_full_name = person.lstrip().rstrip().split(" ")
         person_short_name = person_full_name[0] + " " + person_full_name[-1]
 
-        driver, list_of_fucked_up_säätiöt = säätiö_search(driver, person_short_name, dd_file)
+        driver, list_of_fucked_up_foundation = foundation_search(driver, person_short_name, dd_file)
 
     #close chrome after full search
     driver.quit()
@@ -325,10 +325,10 @@ def do_search(people):
     for firma in list_of_fucked_up_companies:
         print("\t", firma)
 
-    if len(list_of_fucked_up_säätiöt):
+    if len(list_of_fucked_up_foundation):
         print("Something might have gone wrong with following companies:")
-    for säätiö in list_of_fucked_up_säätiöt:
-        print("\t", säätiö)
+    for foundation in list_of_fucked_up_foundation:
+        print("\t", foundation)
 
     return
 
